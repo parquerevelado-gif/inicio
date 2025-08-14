@@ -10,7 +10,7 @@ html, body {
 .ripple-bg {
   width: 100vw;
   height: 100vh;
-  background-image: url('https://i.imgur.com/6DDDG8s.jpeg');
+  background-image: url('https://i.imgur.com/rEAY2CH.jpeg');
   background-size: cover;
   background-position: center;
   position: relative;
@@ -82,7 +82,8 @@ html, body {
 /* Versión móvil: cambia imagen de fondo */
 @media (max-width: 768px) {
   .ripple-bg {
-    background-image: url('https://i.imgur.com/2o8DAU1.jpeg');
+    background-image: url('https://i.imgur.com/1sAHM6q.jpeg');
     background-position: center top;
   }
 }
+
