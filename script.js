@@ -69,3 +69,4 @@ $(document).ready(function () {
       console.error("Error al cargar las fotos:", err);
     });
 });
+
