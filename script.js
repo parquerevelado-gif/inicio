@@ -1,72 +1,90 @@
-const urlCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRBo8Pv60vdGp_trawO9-sPbPqT-SAsdb29F7iPiHmvVvx62qpbNCzJxu4g4nZlNcpRv0A-fUvz5n4U/pub?gid=323684883&single=true&output=csv';
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: sans-serif;
+}
 
-$(document).ready(function () {
-  const $fondo = $(".ripple-bg");
-  const $contenedor = $("#recuerdos-container");
+.ripple-bg {
+  width: 100vw;
+  height: 100vh;
+  background-image: url('https://i.imgur.com/rEAY2CH.jpeg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  z-index: 1;
+}
 
-  // Iniciar en quieto
-  $fondo.ripples({
-    resolution: 128,
-    dropRadius: 20,
-    perturbance: 0,
-    interactive: true
-  });
+.recuerdo-img {
+  position: absolute;
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  filter: brightness(2.5) blur(12px);
+  animation: revelarImagen 1.5s ease-out forwards;
+}
 
-  let fadeTimer;
-
-  function activarMovimiento() {
-    clearTimeout(fadeTimer);
-    $fondo.ripples('set', 'perturbance', 0.015);
-
-    fadeTimer = setTimeout(() => {
-      let steps = 14;
-      let interval = 350;
-      let actual = 0;
-
-      const fade = setInterval(() => {
-        let value = 0.015 - (0.015 / steps) * actual;
-        $fondo.ripples('set', 'perturbance', Math.max(0, value));
-        actual++;
-        if (actual > steps) clearInterval(fade);
-      }, interval);
-    }, 2000);
+@keyframes revelarImagen {
+  0% {
+    opacity: 0;
+    filter: brightness(2.5) blur(12px);
   }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1) blur(0);
+  }
+}
 
-  fetch(urlCSV)
-    .then(res => res.text())
-    .then(csvText => {
-      const fotos = csvText.trim().split('\n');
+/* Desaparición suave */
+.fade-out {
+  animation: desaparecerImagen 1s ease forwards !important;
+}
 
-      $fondo.on("click", function (e) {
-        activarMovimiento();
+@keyframes desaparecerImagen {
+  from {
+    opacity: 1;
+    filter: brightness(1) blur(0);
+  }
+  to {
+    opacity: 0;
+    filter: brightness(1.5) blur(10px);
+  }
+}
 
-        const img = $("<img>")
-          .addClass("recuerdo-img")
-          .attr("src", fotos[Math.floor(Math.random() * fotos.length)])
-          .css({
-            left: e.clientX - 100 + "px",
-            top: e.clientY - 75 + "px"
-          });
+#borrar-recuerdos {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 5;
+  transition: background 0.3s ease;
+}
 
-        $contenedor.append(img);
-      });
+#borrar-recuerdos:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
 
-      $fondo.on("mousemove", activarMovimiento);
+/* Versión móvil: cambia imagen de fondo */
+@media (max-width: 768px) {
+  .ripple-bg {
+    background-image: url('https://i.imgur.com/1sAHM6q.jpeg');
+    background-position: center top;
+  }
+}
 
-      $("#borrar-recuerdos").on("click", function () {
-        $(".recuerdo-img").each(function () {
-          const $img = $(this);
-          $img.addClass("fade-out");
-
-          // Eliminar luego de la animación de salida
-          setTimeout(() => {
-            $img.remove();
-          }, 1000);
-        });
-      });
-    })
-    .catch(err => {
-      console.error("Error al cargar las fotos:", err);
-    });
-});
 
